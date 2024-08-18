@@ -83,15 +83,15 @@ with col2 :
 
 sat_diagnosis = ''
 if st.button('Predict'):
-    sat_prediction = satisfaction_model.predict([[Age, Items_Purchased, Spend_per_Item, Average_Rating, Discount_Applied, DSLP]])
+    sat_prediction = satisfaction_model.predict([[Age,Items_Purchased,Spend_per_Item,
+                                              Average_Rating, Discount_Applied, DSLP]])
+    if(sat_prediction[0] == 0):
+        sat_diagnosis = 'Customer is Unsatisfied'
+    elif (sat_prediction[0] == 1):
+        sat_diagnosis = 'Customer is Neutral'
+    else:
+        sat_diagnosis = 'Customer is Satisfied'
 
-        if(sat_prediction[0] == 0):
-            sat_diagnosis = 'Customer is Unsatisfied'
-        elif (sat_prediction[0] == 1):
-            sat_diagnosis = 'Customer is Neutral'
-        else:
-            sat_diagnosis = 'Customer is Satisfied'
-        
-        st.success(sat_diagnosis)
+    st.success(sat_diagnosis)
 
 
