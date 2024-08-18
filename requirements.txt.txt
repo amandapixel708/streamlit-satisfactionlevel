@@ -5,3 +5,5 @@ pickle
 pip==24.2
 scikit-learn
 statsmodels
+patsy
+matplotlib
