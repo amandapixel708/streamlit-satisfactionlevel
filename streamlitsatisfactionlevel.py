@@ -49,7 +49,7 @@ import pickle
 import streamlit as st
 
 # Save the model if it's not already saved
-#print(model)
+print(model)
 if 'satisfaction_model' not in locals():  # Check if the model file exists
     with open('satisfaction_model.sav', 'wb') as f:
         pickle.dump(model, f)  # Assuming 'model' is your trained RandomForestRegressor
