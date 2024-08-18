@@ -20,8 +20,8 @@ df = pd.read_csv('cleancustomerbehaviourok.csv')
 
 X = df[['Age', 'Items Purchased', 'Spend per Item', 'Average Rating', 'Discount Applied', 'Days Since Last Purchase']]
 Y = df['Satisfaction Level']
-print(X)
-print(Y)
+#print(X)
+#print(Y)
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 #print(X_train.shape,Y_train.shape,X_test.shape,Y_test.shape)
 model = RandomForestRegressor(random_state=42, n_estimators=100)
@@ -49,7 +49,7 @@ import pickle
 import streamlit as st
 
 # Save the model if it's not already saved
-print(model)
+#print(model)
 if 'satisfaction_model' not in locals():  # Check if the model file exists
     with open('satisfaction_model.sav', 'wb') as f:
         pickle.dump(model, f)  # Assuming 'model' is your trained RandomForestRegressor
