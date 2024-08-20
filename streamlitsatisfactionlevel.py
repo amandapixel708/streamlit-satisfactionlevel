@@ -70,7 +70,7 @@ with col2 :
     Items_Purchased = st.text_input('Amount of Items Purchased')
 
 with col1 :
-    Spend_per_Item = st.text_input('Spend per Item, Example 77.910')
+    Spend_per_Item = st.text_input('Spend per Item in $, Example 77.91')
 
 with col2 :
     Average_Rating = st.text_input('Average Rating Range 1-5, Example 3.5')
