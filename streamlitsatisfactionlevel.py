@@ -50,37 +50,51 @@ import pandas as pd
 import pickle
 import streamlit as st
 
-def reset_state():
-    st.experimental_rerun()
-
 # Load trained model
 satisfaction_model = pickle.load(open('satisfaction_model.sav', 'rb'))
 
 # Judul Web
 st.title('Customer Satisfaction Level Prediction')
 
+# Membuat session state untuk prediksi dan input
+if 'sat_diagnosis' not in st.session_state:
+    st.session_state.sat_diagnosis = ''
+if 'reset' not in st.session_state:
+    st.session_state.reset = False
+
+# Fungsi untuk reset state
+def reset_inputs():
+    st.session_state['Age'] = ''
+    st.session_state['Items_Purchased'] = ''
+    st.session_state['Spend_per_Item'] = ''
+    st.session_state['Average_Rating'] = ''
+    st.session_state['Discount_Applied'] = ''
+    st.session_state['DSLP'] = ''
+    st.session_state.sat_diagnosis = ''
+    st.session_state.reset = True
+
 # Membagi kolom
 col1, col2 = st.columns(2)
 
 with col1:
-    Age = st.text_input('Age', '0')
+    Age = st.text_input('Age', '0', key='Age')
 
 with col2:
-    Items_Purchased = st.text_input('Amount of Items Purchased', '0')
+    Items_Purchased = st.text_input('Amount of Items Purchased', '0', key='Items_Purchased')
 
 with col1:
-    Spend_per_Item = st.text_input('Spend per Item in $, Example 77.91', '0')
+    Spend_per_Item = st.text_input('Spend per Item in $, Example 77.91', '0', key='Spend_per_Item')
 
 with col2:
-    Average_Rating = st.text_input('Average Rating Range 1-5, Example 3.5', '0')
+    Average_Rating = st.text_input('Average Rating Range 1-5, Example 3.5', '0', key='Average_Rating')
 
 with col1:
-    Discount_Applied = st.text_input('Discount Applied (0 = No, 1 = Yes)', '0')
+    Discount_Applied = st.text_input('Discount Applied (0 = No, 1 = Yes)', '0', key='Discount_Applied')
 
 with col2:
-    DSLP = st.text_input('Days Since Last Purchase', '0')
+    DSLP = st.text_input('Days Since Last Purchase', '0', key='DSLP')
 
-sat_diagnosis = ''
+# Logika untuk prediksi
 if st.button('Predict'):
     try:
         # Convert inputs to proper numeric values
@@ -101,13 +115,15 @@ if st.button('Predict'):
 
         # Define satisfaction labels
         satisfaction_labels = ["Unsatisfied", "Neutral", "Satisfied"]
-        sat_diagnosis = satisfaction_labels[predicted_class]
-
-        st.success(f'Predicted Satisfaction Level: {sat_diagnosis}')
+        st.session_state.sat_diagnosis = satisfaction_labels[predicted_class]
 
     except ValueError:
         st.error('Please enter valid numerical inputs.')
 
-# Tombol reset untuk restart aplikasi
+# Menampilkan hasil prediksi
+if st.session_state.sat_diagnosis:
+    st.success(f'Predicted Satisfaction Level: {st.session_state.sat_diagnosis}')
+
+# Tombol reset untuk mengosongkan input
 if st.button('Reset'):
-    reset_state()
+    reset_inputs()
