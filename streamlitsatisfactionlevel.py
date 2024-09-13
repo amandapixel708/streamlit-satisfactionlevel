@@ -45,53 +45,69 @@ predicted_label = satisfaction_labels[predicted_class]
 
 print(f'Predicted Satisfaction Level: {predicted_label}')
 
+import numpy as np
+import pandas as pd
 import pickle
 import streamlit as st
 
-# Save the model if it's not already saved
-print(model)
-if 'satisfaction_model' not in locals():  # Check if the model file exists
-    with open('satisfaction_model.sav', 'wb') as f:
-        pickle.dump(model, f)  # Assuming 'model' is your trained RandomForestRegressor
+def reset_state():
+    st.experimental_rerun()
 
-# load model
+# Load trained model
 satisfaction_model = pickle.load(open('satisfaction_model.sav', 'rb'))
 
 # Judul Web
-st.title('Customer Satisfaction Level')
+st.title('Customer Satisfaction Level Prediction')
 
 # Membagi kolom
 col1, col2 = st.columns(2)
 
-with col1 :
-    Age = st.text_input('Age')
+with col1:
+    Age = st.text_input('Age', '0')
 
-with col2 :
-    Items_Purchased = st.text_input('Amount of Items Purchased')
+with col2:
+    Items_Purchased = st.text_input('Amount of Items Purchased', '0')
 
-with col1 :
-    Spend_per_Item = st.text_input('Spend per Item in $, Example 77.91')
+with col1:
+    Spend_per_Item = st.text_input('Spend per Item in $, Example 77.91', '0')
 
-with col2 :
-    Average_Rating = st.text_input('Average Rating Range 1-5, Example 3.5')
+with col2:
+    Average_Rating = st.text_input('Average Rating Range 1-5, Example 3.5', '0')
 
-with col1 :
-    Discount_Applied = st.text_input('Discount Applied (0 = No, 1 = Yes)')
+with col1:
+    Discount_Applied = st.text_input('Discount Applied (0 = No, 1 = Yes)', '0')
 
-with col2 :
-    DSLP = st.text_input('Days Since Last Purchase')
+with col2:
+    DSLP = st.text_input('Days Since Last Purchase', '0')
 
 sat_diagnosis = ''
 if st.button('Predict'):
-    sat_prediction = satisfaction_model.predict([[Age,Items_Purchased,Spend_per_Item,
-                                              Average_Rating, Discount_Applied, DSLP]])
-    if(sat_prediction[0] == 0):
-        sat_diagnosis = 'Customer is Unsatisfied'
-    elif (sat_prediction[0] == 1):
-        sat_diagnosis = 'Customer is Neutral'
-    else:
-        sat_diagnosis = 'Customer is Satisfied'
+    try:
+        # Convert inputs to proper numeric values
+        Age = float(Age)
+        Items_Purchased = float(Items_Purchased)
+        Spend_per_Item = float(Spend_per_Item)
+        Average_Rating = float(Average_Rating)
+        Discount_Applied = int(Discount_Applied)
+        DSLP = float(DSLP)
 
-    st.success(sat_diagnosis)
+        # Predict using the loaded model
+        sat_prediction = satisfaction_model.predict([[Age, Items_Purchased, Spend_per_Item,
+                                                      Average_Rating, Discount_Applied, DSLP]])
 
+        # Convert numerical prediction to the nearest integer class (0, 1, 2)
+        predicted_class = int(round(sat_prediction[0]))
+        predicted_class = max(0, min(predicted_class, 2))  # Ensure the prediction is within valid range
 
+        # Define satisfaction labels
+        satisfaction_labels = ["Unsatisfied", "Neutral", "Satisfied"]
+        sat_diagnosis = satisfaction_labels[predicted_class]
+
+        st.success(f'Predicted Satisfaction Level: {sat_diagnosis}')
+
+    except ValueError:
+        st.error('Please enter valid numerical inputs.')
+
+# Tombol reset untuk restart aplikasi
+if st.button('Reset'):
+    reset_state()
