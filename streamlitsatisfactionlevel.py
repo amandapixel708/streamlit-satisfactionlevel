@@ -58,7 +58,7 @@ if 'satisfaction_model' not in locals():  # Check if the model file exists
 satisfaction_model = pickle.load(open('satisfaction_model.sav', 'rb'))
 
 # Judul Web
-st.title('Customer Satisfaction Level')
+st.title('Customer Satisfaction Level (Please click Manage App button to refresh the system')
 
 # Membagi kolom
 col1, col2 = st.columns(2)
